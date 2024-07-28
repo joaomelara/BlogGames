@@ -3,6 +3,7 @@ const router = express.Router();
 const Category = require("../categories/Category");
 const Article = require("../articles/Article");
 const slugify = require("slugify");
+const { Model } = require("sequelize");
 
 router.get("/admin/articles", (req, res,)=>{
     // Article.findAll({raw:true, order:[
@@ -18,7 +19,8 @@ router.get("/admin/articles", (req, res,)=>{
     //     })
     // })
 
-    Article.findAll({raw:true, order:[
+    Article.findAll({ include:[{model:Category}]},
+        {raw:true, order:[
         ['id','DESC']
     ]}).then(article =>{
         res.render("admin/articles/index",{
@@ -56,7 +58,27 @@ router.post("/articles/save", (req,res)=>{
         
     
     
-})
+});
+
+router.post("/articles/delete", (req,res)=>{
+    var id = req.body.id;
+    if(id != undefined){
+        if(!isNaN(id)){
+            Article.destroy({
+                where: {
+                    id:id,
+                }
+            }).then(()=>{
+                res.redirect("/admin/articles")
+            })
+        }else{//NAO FOR NUMERO
+            res.redirect("/admin/articles");
+        }
+    }else{//NAO FOR NULL
+        res.redirect("/admin/articles");
+    }
+});
+
 
 
 
