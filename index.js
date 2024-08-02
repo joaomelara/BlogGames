@@ -4,10 +4,13 @@ const bodyParser = require("body-parser");
 const connection = require("./database/database");
 const categoriesController = require("./categories/categoriesController");
 const articlesController = require("./articles/articlesController");
+const userController = require("./user/userController");
 
 const Article = require("./articles/Article");
 const Category = require("./categories/Category");
-const { Model, where } = require("sequelize");
+const User = require("./user/User");
+
+//const { Model, where } = require("sequelize");
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -24,13 +27,15 @@ connection.authenticate().then(()=>{
 
 app.use("",categoriesController);
 app.use("",articlesController);
+app.use("",userController);
 
 
 app.get("/", (req, res) => {
     Article.findAll({
         include: [{ model: Category }],
         raw: true,
-        order: [["id", "DESC"]] // Correcting the order array syntax
+        order: [["id", "DESC"]], // Correcting the order array syntax
+        limit: 4
     }).then(articles => {
         Category.findAll({
             raw: true,
