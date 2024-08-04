@@ -5,12 +5,20 @@ const connection = require("./database/database");
 const categoriesController = require("./categories/categoriesController");
 const articlesController = require("./articles/articlesController");
 const userController = require("./user/userController");
+const session = require("express-session");
 
 const Article = require("./articles/Article");
 const Category = require("./categories/Category");
 const User = require("./user/User");
 
 //const { Model, where } = require("sequelize");
+
+//Redis - salvamento de cash para apps em grande escala
+//Não é ideal usar o storage padrão do express
+
+app.use(session({
+    secret: "umasenhatotalmentealeatoria123098",cookie:{maxAge:3000000 }
+}));
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));

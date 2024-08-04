@@ -3,9 +3,9 @@ const router = express.Router();
 const Category = require("../categories/Category");
 const Article = require("../articles/Article");
 const slugify = require("slugify");
-const { Model, where, or } = require("sequelize");
+const adminAuth = require("../middlewares/adminAuth");
 
-router.get("/admin/articles", (req, res,)=>{
+router.get("/admin/articles", adminAuth, (req, res,)=>{
     // Article.findAll({raw:true, order:[
     //     ['id','DESC']
     // ]}).then(article =>{
@@ -30,7 +30,7 @@ router.get("/admin/articles", (req, res,)=>{
   
 });   
 
-router.get("/admin/articles/new", (req, res,)=>{
+router.get("/admin/articles/new",adminAuth, (req, res,)=>{
     Category.findAll({raw:true, order:[
         ['id','DESC']
     ]}).then(category=>{
@@ -41,7 +41,7 @@ router.get("/admin/articles/new", (req, res,)=>{
     
 });
 
-router.post("/articles/save", (req,res)=>{
+router.post("/articles/save", adminAuth, (req,res)=>{
     var title = req.body.title;
     var body = req.body.body;
     var category = req.body.category;
@@ -60,7 +60,7 @@ router.post("/articles/save", (req,res)=>{
     
 });
 
-router.post("/articles/delete", (req,res)=>{
+router.post("/articles/delete",adminAuth, (req,res)=>{
     var id = req.body.id;
     if(id != undefined){
         if(!isNaN(id)){
@@ -79,7 +79,7 @@ router.post("/articles/delete", (req,res)=>{
     }
 });
 
-router.get("/admin/articles/edit/:id", (req,res)=>{
+router.get("/admin/articles/edit/:id",adminAuth, (req,res)=>{
     var id = req.params.id;
 
     Article.findByPk(id, {include: [{model: Category}]})
@@ -101,7 +101,7 @@ router.get("/admin/articles/edit/:id", (req,res)=>{
     });
 });
 
-router.post("/articles/update", (req, res)=>{
+router.post("/articles/update",adminAuth, (req, res)=>{
     var id = req.body.id;
     var title = req.body.title;
     var body = req.body.body;
